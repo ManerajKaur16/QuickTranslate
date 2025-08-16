@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register with Phone - Uni Translator</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB1bdyCh87pa1nQk_te72zrZLxrqlQvB-o",
+      authDomain: "smartlibrarymanagementsy-13082.firebaseapp.com",
+      databaseURL: "https://smartlibrarymanagementsy-13082-default-rtdb.firebaseio.com",
+      projectId: "smartlibrarymanagementsy-13082",
+      storageBucket: "smartlibrarymanagementsy-13082.appspot.com",
+      messagingSenderId: "128388067166",
+      appId: "1:128388067166:web:02bf2c483c53342912b96f"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    let recaptchaVerifier;
+    let confirmationResult;
+
+    window.onload = () => {
+      recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", {
+        size: "normal",
+        callback: (response) => {
+          console.log("reCAPTCHA verified");
+          document.getElementById("send-otp-btn").disabled = false;
+        },
+        'expired-callback': () => {
+          document.getElementById("status").innerText = "❌ reCAPTCHA expired. Please refresh.";
+        }
+      });
+      recaptchaVerifier.render();
+    };
+  </script>
+</head>
+
+<body>
+  <div class="login-container">
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <h2>Create New Account</h2>
+
+    <input type="text" id="phone-number" placeholder="+60123456789" />
+    <div id="recaptcha-container" style="margin-top:10px;"></div>
+
+    <button onclick="sendOTP()" id="send-otp-btn" class="primary-btn-verify" disabled>Send OTP</button>
+
+    <input type="text" id="otp-code" placeholder="Enter OTP" />
+    <button onclick="verifyOTP()" class="primary-btn-verify">Verify OTP</button>
+
+    <div id="phone-pass-section" class="hidden">
+      <label>Create Password</label>
+      <div class="password-container">
+        <input type="password" id="otp-password" placeholder="Enter password" required />
+        <button class="toggle-password" onclick="toggleVisibility('otp-password', this)">
+          <img src="https://img.icons8.com/ios-glyphs/30/visible.png" alt="Show" />
+        </button>
+      </div>
+
+      <label>Confirm Password</label>
+      <div class="password-container">
+        <input type="password" id="otp-confirm" placeholder="Confirm password" required />
+        <button class="toggle-password" onclick="toggleVisibility('otp-confirm', this)">
+          <img src="https://img.icons8.com/ios-glyphs/30/visible.png" alt="Show" />
+        </button>
+      </div>
+
+      <button onclick="finalizePhoneSignup()" class="primary-btn-verify">Finish Registration</button>
+    </div>
+
+    <p id="status" class="status-message"></p>
+  </div>
+
+  <script>
+    function sendOTP() {
+      const phoneNumber = document.getElementById("phone-number").value.trim();
+      const status = document.getElementById("status");
+
+      if (!/^\+\d{10,15}$/.test(phoneNumber)) {
+        status.innerText = "❌ Invalid phone number format.";
+        return;
+      }
+
+      status.innerText = "🔐 Sending OTP...";
+
+      auth.signInWithPhoneNumber(phoneNumber, recaptchaVerifier)
+        .then(result => {
+          confirmationResult = result;
+          status.innerText = "✅ OTP sent to your phone.";
+        })
+        .catch(error => {
+          console.error(error);
+          status.innerText = "❌ Failed to send OTP: " + error.message;
+        });
+    }
+
+    function verifyOTP() {
+      const code = document.getElementById("otp-code").value.trim();
+      const status = document.getElementById("status");
+
+      if (!confirmationResult) {
+        status.innerText = "❌ Request OTP first.";
+        return;
+      }
+
+      confirmationResult.confirm(code)
+        .then(() => {
+          document.getElementById("phone-pass-section").classList.remove("hidden");
+          status.innerText = "✅ OTP verified. Set your password.";
+        })
+        .catch(() => {
+          status.innerText = "❌ Incorrect OTP.";
+        });
+    }
+
+    function finalizePhoneSignup() {
+      const password = document.getElementById("otp-password").value.trim();
+      const confirm = document.getElementById("otp-confirm").value.trim();
+      const status = document.getElementById("status");
+      const user = firebase.auth().currentUser;
+
+      if (!user) {
+        status.innerText = "❌ No user signed in.";
+        return;
+      }
+
+      if (password.length < 6) {
+        status.innerText = "❌ Password must be at least 6 characters.";
+        return;
+      }
+
+      if (password !== confirm) {
+        status.innerText = "❌ Passwords do not match.";
+        return;
+      }
+
+      const pseudoEmail = user.phoneNumber + "@phone.fake";
+      const credential = firebase.auth.EmailAuthProvider.credential(pseudoEmail, password);
+
+      user.linkWithCredential(credential)
+        .then(() => {
+          db.ref("users/" + user.uid).set({
+            user_id: user.uid,
+            phone_number: user.phoneNumber,
+            email: pseudoEmail,
+            password: password,
+            created_at: new Date().toISOString()
+          });
+          status.innerText = "✅ Registration complete!";
+          setTimeout(() => window.location.href = "main.html", 2000);
+        })
+        .catch(error => {
+          status.innerText = "❌ Error saving user: " + error.message;
+        });
+    }
+
+    function toggleVisibility(id, btn) {
+      const field = document.getElementById(id);
+      const icon = btn.querySelector("img");
+      if (field.type === "password") {
+        field.type = "text";
+        icon.src = "https://img.icons8.com/ios-glyphs/30/invisible.png";
+      } else {
+        field.type = "password";
+        icon.src = "https://img.icons8.com/ios-glyphs/30/visible.png";
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Language Translator</title>
+
+  <script>
+    (function () {
+      const saved = JSON.parse(localStorage.getItem("settings")) || {};
+      const theme = saved.theme || "light";
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.classList.add(`${theme}-theme`);
+      });
+    })();
+  </script>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+</head>
+<body class="main-home">
+
+  <!-- Sidebar -->
+  <div id="sidebar-container"></div>
+
+  <div class="home-container translator-card">
+    <h1>Sign Language Translator</h1>
+    <p class="subtitle">Translate To Your Language, Your Way!</p>
+
+    <!-- Text Input -->
+    <textarea id="textInput" placeholder="Type something or use the mic..." class="input-area"></textarea>
+
+    <!-- Buttons -->
+    <div class="button-row">
+      <button class="primary-btn" onclick="translateToImage()">🖼️ Translate to Image Sign Language</button>
+      <button class="primary-btn" onclick="startSpeechRecognition()">🎤 Speak</button>
+      <button class="primary-btn" onclick="startWebcamPrediction()">📷 Show Sign via Webcam</button>
+    </div>
+
+    <!-- Output Box -->
+    <h3 class="output-heading">Sign Language Translation</h3>
+    <div id="outputBox" class="output-box">Sign Language Translation Appears Here...</div>
+  </div>
+
+  <!-- JS Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <script>
+    function formatLang(lang) {
+      if (!lang.id) return lang.text;
+      const flag = $(lang.element).data("flag");
+      const img = flag ? `<img src="https://flagcdn.com/w40/${flag}.png" class="flag-icon" />` : "";
+      return $(`<span>${img}${lang.text}</span>`);
+    }
+
+    $(document).ready(function () {
+      $('#langSelect').select2({
+        templateResult: formatLang,
+        templateSelection: formatLang,
+        minimumResultsForSearch: 1,
+        width: '100%'
+      });
+    });
+
+    // Sidebar loading
+    fetch("sidebar.html")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("sidebar-container").innerHTML = html;
+        const toggleBtn = document.getElementById("menuToggle");
+        const sidebar = document.getElementById("sidebar");
+        if (toggleBtn && sidebar) {
+          toggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("show");
+          });
+        }
+        const links = document.querySelectorAll('.sidebar-menu a');
+        const currentPage = window.location.pathname.split("/").pop();
+        links.forEach(link => {
+          if (link.getAttribute("href") === currentPage) {
+            link.classList.add("active");
+          }
+        });
+      });
+  </script>
+
+  <script src="sign-language.js"></script>
+</body>
+</html>

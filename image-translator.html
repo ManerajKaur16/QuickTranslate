@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Translator</title>
+
+  <script>
+    const saved = JSON.parse(localStorage.getItem("settings")) || {};
+    const theme = saved.theme || "light";
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add(`${theme}-theme`);
+    });
+  </script>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+
+  <style>
+    video, canvas, #capturedImagePreview {
+      display: none;
+    }
+    .show {
+      display: block !important;
+    }
+  </style>
+</head>
+
+<body class="main-home">
+  <div id="sidebar-container"></div>
+
+  <div class="home-container translator-card">
+    <h1>Image Translator</h1>
+    <p class="subtitle">Translate To Your Language, Your Way!</p>
+
+    <label for="imageInput">Upload or Capture Image</label>
+    <input type="file" id="imageInput" accept="image/*" capture="environment" class="input-area" />
+    <button id="openCameraBtn" class="primary-btn">📸 Open Camera</button>
+    <button id="snapBtn" class="primary-btn" style="display:none;">📷 Snap Photo</button>
+
+    <video id="video" autoplay muted></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <img id="capturedImagePreview" alt="Captured Image Preview" />
+
+    <label for="languageSelect">Select Target Language</label>
+    <select id="languageSelect" class="input-area">
+      <option value="en">English</option>
+      <option value="ms">Malay</option>
+      <option value="zh">Chinese</option>
+      <option value="ta">Tamil</option>
+      <option value="ar">Arabic</option>
+      <option value="hi">Hindi</option>
+      <option value="fr">French</option>
+      <option value="de">German</option>
+      <option value="id">Indonesian</option>
+      <option value="ja">Japanese</option>
+      <option value="ko">Korean</option>
+    </select>
+
+    <button id="translateBtn" class="primary-btn">🌐 Translate Image</button>
+    <div class="output-box" id="translatedText">📚 Translation will appear here.</div>
+    <button id="speakBtn" class="primary-btn listen-btn">🔊 Listen</button>
+    <button id="copyBtn" class="copy-btn">📋 Copy</button>
+  </div>
+
+  <script>
+    fetch("sidebar.html").then(res => res.text()).then(html => {
+      document.getElementById("sidebar-container").innerHTML = html;
+
+      const toggleBtn = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+
+      if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("show");
+        });
+      }
+
+      const links = document.querySelectorAll('.sidebar-menu a');
+      const currentPage = window.location.pathname.split("/").pop();
+
+      links.forEach(link => {
+        if (link.getAttribute("href") === currentPage) {
+          link.classList.add("active");
+        }
+      });
+    });
+  </script>
+
+  <script src="imagetranslate.js"></script>
+</body>
+</html>

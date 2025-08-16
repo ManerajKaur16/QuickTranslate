@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - Quick Translate</title>
+
+   <script>
+  (function () {
+    const saved = JSON.parse(localStorage.getItem("settings")) || {};
+    const theme = saved.theme || "light";
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add(`${theme}-theme`);
+    });
+  })();
+</script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<!-- Sidebar Placeholder -->
+  <div id="sidebar-container"></div>
+
+<body class="main-home">
+  <div id="sidebar-container"></div>
+
+  <div class="home-card">
+    <h1>Welcome To Quick Translate</h1>
+    <p class="subtitle">Select to start your translation journey!</p>
+
+    <div class="module-grid">
+      <!-- Text Translator -->
+      <div class="module-card" onclick="window.location.href='text-translator.html'">
+        <img src="assets/text.png" alt="Text Translator" />
+        <div class="module-title">Text Translator</div>
+      </div>
+
+      <!-- Speech Translator -->
+      <div class="module-card" onclick="window.location.href='speech-translator.html'">
+        <img src="assets/speech.png" alt="Speech Translator" />
+        <div class="module-title">Speech Translator</div>
+      </div>
+
+      <!-- Sign Language Translator -->
+      <div class="module-card" onclick="window.location.href='sign-language.html'">
+        <img src="assets/signlanguage.png" alt="Sign Language" />
+        <div class="module-title">Sign-Language Translator</div>
+      </div>
+
+      <!-- Idioms Translator -->
+      <div class="module-card" onclick="window.location.href='idioms.html'">
+        <img src="assets/idioms.png" alt="Idioms" />
+        <div class="module-title">Idioms Translator</div>
+      </div>
+
+      <!-- Image Translator -->
+      <div class="module-card" onclick="window.location.href='image-translator.html'">
+        <img src="assets/image.png" alt="Image Translator" />
+        <div class="module-title">Image Translator</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar loader -->
+  <script>
+    fetch("sidebar.html").then(res => res.text()).then(html => {
+      document.getElementById("sidebar-container").innerHTML = html;
+
+      const toggleBtn = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+
+      if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("show");
+        });
+      }
+
+      const links = document.querySelectorAll('.sidebar-menu a');
+      const currentPage = window.location.pathname.split("/").pop();
+      links.forEach(link => {
+        if (link.getAttribute("href") === currentPage) {
+          link.classList.add("active");
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>

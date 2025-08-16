@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malaysian Road Sign Detector</title>
+
+  <!-- Persist theme like your other pages -->
+  <script>
+    (function () {
+      const saved = JSON.parse(localStorage.getItem("settings")) || {};
+      const theme = saved.theme || "light";
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.classList.add(`${theme}-theme`);
+      });
+    })();
+  </script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="main-home">
+  <!-- Sidebar -->
+  <div id="sidebar-container"></div>
+
+  <!-- Card -->
+  <main class="home-container translator-card">
+    <h1>Malaysian Road Sign Detector</h1>
+    <p class="subtitle">Upload a Malaysian road sign image:</p>
+
+    <!-- Input -->
+    <label for="uploadInput">Choose an image</label>
+    <input
+      type="file"
+      id="uploadInput"
+      accept="image/*"
+      aria-label="Choose a Malaysian road sign image"
+    />
+    <p class="note">Tip: you can also paste an image or use the camera.</p>
+    <p class="note">Accepted: JPG, PNG, WEBP</p>
+
+    <!-- Camera controls -->
+    <div class="button-row">
+      <button id="openCamBtn" class="primary-btn" type="button">Open Camera</button>
+      <button id="snapBtn" class="primary-btn hidden" type="button">Take Photo</button>
+    </div>
+
+    <!-- Live camera preview (hidden by default) -->
+    <div id="camera-container">
+      <video id="camera" class="webcam-video"></video>
+      <canvas id="capture-canvas"></canvas>
+    </div>
+
+    <!-- Detect -->
+    <button id="detectBtn" class="primary-btn" onclick="predictSign()">Detect Sign</button>
+
+    <!-- Loading spinner (already styled in style.css) -->
+    <div id="loading">
+      <span class="loader"></span>
+      <div>Analyzing image…</div>
+    </div>
+
+    <!-- Messages -->
+    <div id="status" class="status-message"></div>
+    <div id="errorBox" class="status-message"></div>
+
+    <!-- Result + Preview -->
+    <img id="preview" alt="Detected Road Sign Preview" class="preview-img" />
+    <div id="result" class="output-box hidden"></div>
+
+    <!-- Reset (blue) -->
+    <button id="resetBtn" class="copy-btn" type="button">Reset</button>
+  </main>
+
+  <!-- Sidebar loader -->
+  <script>
+    fetch("sidebar.html")
+      .then(res => res.text())
+      .then(html => {
+        const wrap = document.getElementById("sidebar-container");
+        if (wrap) {
+          wrap.innerHTML = html;
+          const toggleBtn = document.getElementById("menuToggle");
+          const sidebar = document.getElementById("sidebar");
+          if (toggleBtn && sidebar) {
+            toggleBtn.addEventListener("click", () => sidebar.classList.toggle("show"));
+          }
+          const links = document.querySelectorAll(".sidebar-menu a");
+          const currentPage = window.location.pathname.split("/").pop();
+          links.forEach(link => {
+            if (link.getAttribute("href") === currentPage) link.classList.add("active");
+          });
+        }
+      });
+  </script>
+
+  <script src="road_sign.js"></script>
+</body>
+</html>

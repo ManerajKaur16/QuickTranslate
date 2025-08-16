@@ -1,0 +1,9 @@
+ <script>
+  (function () {
+    const saved = JSON.parse(localStorage.getItem("settings")) || {};
+    const theme = saved.theme || "light";
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add(`${theme}-theme`);
+    });
+  })();
+</script>

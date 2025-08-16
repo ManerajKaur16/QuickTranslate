@@ -1,0 +1,301 @@
+<script>
+  const savedSettings = JSON.parse(localStorage.getItem("settings")) || {};
+  const theme = savedSettings.theme || "light";
+  document.body.classList.add(`${theme}-theme`);
+</script>
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+  const firebaseConfig = {
+     apiKey: "AIzaSyB1bdyCh87pa1nQk_te72zrZLxrqlQvB-o",
+      authDomain: "smartlibrarymanagementsy-13082.firebaseapp.com",
+      databaseURL: "https://smartlibrarymanagementsy-13082-default-rtdb.firebaseio.com",
+      projectId: "smartlibrarymanagementsy-13082",
+      storageBucket: "smartlibrarymanagementsy-13082.appspot.com",
+      messagingSenderId: "128388067166",
+      appId: "1:128388067166:web:02bf2c483c53342912b96f",
+      measurementId: "G-37HLHXN253"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  window.database = database;
+  window.push = push;
+  window.ref = ref;
+  window.set = set;
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Speech Translator</title>
+
+
+  <!-- Theme Loader -->
+  <script>
+    (function () {
+      const saved = JSON.parse(localStorage.getItem("settings")) || {};
+      const theme = saved.theme || "light";
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.classList.add(`${theme}-theme`);
+      });
+    })();
+  </script>
+
+  <!-- Styling -->
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <style>
+    .select2-container--default .select2-selection--single {
+      height: 48px;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered img {
+      width: 20px;
+      height: 15px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .select2-results__option img {
+      width: 20px;
+      height: 15px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .translator-card select {
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="main-home">
+
+  <!-- Sidebar -->
+  <div id="sidebar-container"></div>
+
+  <div class="home-container translator-card">
+    <h1>Speech Translator</h1>
+    <p class="subtitle">Translate To Your Language, Your Way!</p>
+
+    <label for="inputLang">Spoken Language</label>
+    <select id="inputLang" class="lang-select">
+            <option value="en" data-flag="us">English</option>
+            <option value="bn" data-flag="bd">Bengali</option>
+            <option value="zh" data-flag="cn">Chinese (Mandarin)</option>
+            <option value="tl" data-flag="ph">Filipino</option> 
+            <option value="fr" data-flag="fr">French</option>
+            <option value="de" data-flag="de">German</option>
+            <option value="hi" data-flag="in">Hindi</option>
+            <option value="id" data-flag="id">Indonesian</option>
+            <option value="it" data-flag="it">Italian</option>
+            <option value="ja" data-flag="jp">Japanese</option>
+            <option value="ko" data-flag="kr">Korean</option>
+            <option value="ml" data-flag="in">Malayalam</option>
+            <option value="ms" data-flag="my">Malay</option>
+            <option value="nl" data-flag="nl">Dutch</option>
+            <option value="pa" data-flag="my">Punjabi</option>
+            <option value="pl" data-flag="pl">Polish</option>
+            <option value="pt" data-flag="pt">Portuguese</option>
+            <option value="ru" data-flag="ru">Russian</option>
+            <option value="ta" data-flag="in">Tamil</option>
+            <option value="te" data-flag="in">Telugu</option>
+            <option value="th" data-flag="th">Thai</option>
+            <option value="tr" data-flag="tr">Turkish</option>
+            <option value="vi" data-flag="vn">Vietnamese</option>
+            <option value="ur" data-flag="pk">Urdu</option>
+            <option value="ar" data-flag="sa">Arabic</option>
+    </select>
+
+    <label for="targetLang">Translation Language</label>
+    <select id="targetLang" class="lang-select">
+            <option value="en" data-flag="us">English</option>
+            <option value="bn" data-flag="bd">Bengali</option>
+            <option value="zh" data-flag="cn">Chinese (Mandarin)</option>
+            <option value="tl" data-flag="ph">Filipino</option> 
+            <option value="fr" data-flag="fr">French</option>
+            <option value="de" data-flag="de">German</option>
+            <option value="hi" data-flag="in">Hindi</option>
+            <option value="id" data-flag="id">Indonesian</option>
+            <option value="it" data-flag="it">Italian</option>
+            <option value="ja" data-flag="jp">Japanese</option>
+            <option value="ko" data-flag="kr">Korean</option>
+            <option value="ml" data-flag="in">Malayalam</option>
+            <option value="ms" data-flag="my">Malay</option>
+            <option value="nl" data-flag="nl">Dutch</option>
+            <option value="pa" data-flag="my">Punjabi</option>
+            <option value="pl" data-flag="pl">Polish</option>
+            <option value="pt" data-flag="pt">Portuguese</option>
+            <option value="ru" data-flag="ru">Russian</option>
+            <option value="ta" data-flag="in">Tamil</option>
+            <option value="te" data-flag="in">Telugu</option>
+            <option value="th" data-flag="th">Thai</option>
+            <option value="tr" data-flag="tr">Turkish</option>
+            <option value="vi" data-flag="vn">Vietnamese</option>
+            <option value="ur" data-flag="pk">Urdu</option>
+            <option value="ar" data-flag="sa">Arabic</option>
+    </select>
+
+    <button onclick="startSpeechRecognition()" class="primary-btn listen-btn">🎤 Speak</button>
+
+    <h3 class="output-heading">You said:</h3>
+    <textarea id="inputText" placeholder="Enter text here..." rows="6" class="input-area"></textarea>
+
+    <h3 class="output-heading">Translated:</h3>
+    <div id="translatedText" class="output-box">...</div>
+    <button onclick="speakOutput()" class="primary-btn listen-btn">🔊 Speak Output</button>
+    <button onclick="copyTranslation()" class="copy-btn">📋 Copy</button>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <script>
+    let translatedText = "";
+
+    function startSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return alert("Speech recognition not supported.");
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = getSpeechLang(document.getElementById("inputLang").value);
+      recognition.start();
+
+      recognition.onresult = function (event) {
+        const speechText = event.results[0][0].transcript;
+        document.getElementById("inputText").value = speechText;
+        translateTypedText();  // Auto-translate after speaking
+      };
+      recognition.onerror = function () {
+        alert("Speech recognition error.");
+      };
+    }
+
+    function getSpeechLang(code) {
+    const map = {
+    en: "en-US", bn: "bn-BD", zh: "zh-CN", tl: "fil-PH", fr: "fr-FR",
+    de: "de-DE", hi: "hi-IN", id: "id-ID", it: "it-IT", ja: "ja-JP",
+    ko: "ko-KR", ml: "ml-IN", ms: "ms-MY", nl: "nl-NL", pa: "pa-IN",
+    pl: "pl-PL", pt: "pt-PT", ru: "ru-RU", ta: "ta-IN", te: "te-IN",
+    th: "th-TH", tr: "tr-TR", vi: "vi-VN", ur: "ur-PK", ar: "ar-SA"
+    };
+    return map[code] || "en-US";
+    }
+
+
+async function translateTypedText() {
+  const input = document.getElementById("inputText").value;
+  const targetLang = document.getElementById("targetLang").value;
+  const apiKey = "AIzaSyB1bdyCh87pa1nQk_te72zrZLxrqlQvB-o";
+
+  const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ q: input, target: targetLang })
+  });
+
+  const data = await response.json();
+  if (data?.data?.translations[0]) {
+    translatedText = data.data.translations[0].translatedText;
+    document.getElementById("translatedText").innerText = translatedText;
+
+    // ✅ Save to Firebase
+    saveSpeechTranslation(input, translatedText);
+
+    speakOutput();  // Auto-speak
+  } else {
+    document.getElementById("translatedText").innerText = "Translation failed.";
+  }
+}
+
+
+    function speakOutput() {
+      const output = translatedText.trim();
+      if (!output) return alert("No translated text to speak.");
+      const utterance = new SpeechSynthesisUtterance(output);
+      utterance.lang = document.getElementById("targetLang").value;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function copyTranslation() {
+      navigator.clipboard.writeText(translatedText).then(() => alert("Copied!"));
+    }
+
+    // Preload voices
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+
+    // Sidebar loader
+    fetch("sidebar.html").then(res => res.text()).then(html => {
+      document.getElementById("sidebar-container").innerHTML = html;
+
+      const toggleBtn = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+      if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("show");
+        });
+      }
+
+      const links = document.querySelectorAll('.sidebar-menu a');
+      const currentPage = window.location.pathname.split("/").pop();
+      links.forEach(link => {
+        if (link.getAttribute("href") === currentPage) {
+          link.classList.add("active");
+        }
+      });
+    });
+
+    // Flags
+    function formatLang(lang) {
+      if (!lang.id) return lang.text;
+      const flag = $(lang.element).data('flag');
+      const img = flag ? `<img src="https://flagcdn.com/w40/${flag}.png"/>` : "";
+      return $(`<span>${img} ${lang.text}</span>`);
+    }
+
+    $(document).ready(function () {
+      $('#inputLang, #targetLang').select2({
+        templateResult: formatLang,
+        templateSelection: formatLang,
+        minimumResultsForSearch: 1,
+        width: '100%'
+      });
+    });
+  </script>
+
+
+<script>
+  async function saveSpeechTranslation(inputText, translatedText) {
+    try {
+      const userId = localStorage.getItem("user_id") || "guest_user";
+      const dbRef = ref(database, "speech_translations"); // separate node from text_translations
+      const newRef = push(dbRef); // auto-generate ID
+
+      const data = {
+        translation_id: newRef.key,
+        user_id: userId,
+        input_text: inputText,
+        translated_text: translatedText,
+        timestamp: new Date().toISOString()
+      };
+
+      await set(newRef, data);
+      console.log("✅ Speech translation saved!");
+    } catch (err) {
+      console.error("❌ Failed to save speech translation:", err);
+    }
+  }
+</script>
+
+  <script src="translate.js"></script>
+
+</body>
+</html>

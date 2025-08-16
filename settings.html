@@ -1,0 +1,138 @@
+<!-- settings.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings - Uni Translator</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <script>
+    const stored = JSON.parse(localStorage.getItem("settings")) || {};
+    const theme = stored.theme || "light";
+    document.documentElement.classList.add(`${theme}-theme`);
+  </script>
+</head>
+
+<body class="main-home">
+  <div id="sidebar-container"></div>
+
+  <div class="settings-block">
+    <h1>Settings</h1>
+
+    <!-- Voice Speed -->
+    <div class="setting-group">
+      <div class="slider-label">
+        <label for="voiceSpeed">Voice Speed</label>
+        <span id="speedValue">1.0x</span>
+      </div>
+      <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.1" value="1.0" oninput="previewVoiceSpeed()" />
+      <button onclick="playPreviewVoice()" class="primary-btn">🔊 Play Sample</button>
+    </div>
+
+    <!-- Theme -->
+    <div class="setting-group">
+      <label>Theme</label>
+      <div class="theme-options">
+        <div class="theme-btn theme-btn-cherry" data-theme="light" onclick="previewTheme('light')">Cherry</div>
+        <div class="theme-btn theme-btn-royal" data-theme="dark" onclick="previewTheme('dark')">Royal</div>
+        <div class="theme-btn theme-btn-dusk" data-theme="medium" onclick="previewTheme('medium')">Dusk</div>
+      </div>
+    </div>
+
+    <!-- Save / Reset -->
+    <button class="primary-btn" onclick="saveSettings()">💾 Save Settings</button>
+    <button class="secondary-btn" onclick="resetDefaults()">🔁 Reset to Defaults</button>
+    <div id="status" class="status-message"></div>
+
+
+  </div>
+
+  <script>
+    let selectedTheme = 'light';
+    const previewText = "This is your current voice speed.";
+
+    window.onload = () => {
+      const saved = JSON.parse(localStorage.getItem("settings")) || {};
+      if (saved.speed) {
+        document.getElementById("voiceSpeed").value = saved.speed;
+        document.getElementById("speedValue").innerText = saved.speed + "x";
+      }
+      if (saved.theme) {
+        selectedTheme = saved.theme;
+        previewTheme(saved.theme);
+      }
+    };
+
+    function previewVoiceSpeed() {
+      const speed = document.getElementById("voiceSpeed").value;
+      document.getElementById("speedValue").innerText = speed + "x";
+    }
+
+    function playPreviewVoice() {
+      const speed = parseFloat(document.getElementById("voiceSpeed").value);
+      const utterance = new SpeechSynthesisUtterance(previewText);
+      utterance.rate = speed;
+      speechSynthesis.speak(utterance);
+    }
+
+    function previewTheme(theme) {
+      selectedTheme = theme;
+      applyTheme(theme);
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === theme);
+      });
+    }
+
+    function applyTheme(theme) {
+      document.body.classList.remove("light-theme", "dark-theme", "medium-theme");
+      document.body.classList.add(`${theme}-theme`);
+    }
+
+    function saveSettings() {
+      const speed = document.getElementById("voiceSpeed").value;
+      localStorage.setItem("settings", JSON.stringify({ speed, theme: selectedTheme }));
+      document.getElementById("status").innerText = "✅ Settings saved!";
+    }
+    
+
+    function resetDefaults() {
+      localStorage.removeItem("settings");
+      document.getElementById("voiceSpeed").value = "1.0";
+      document.getElementById("speedValue").innerText = "1.0x";
+      previewTheme("light");
+      document.getElementById("status").innerText = "🔁 Reset to default settings!";
+    }
+  </script>
+
+  <!--  Sidebar Loader, Toggle, and Active Page Highlight -->
+<script>
+  // Inject sidebar HTML
+  fetch("sidebar.html")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("sidebar-container").innerHTML = html;
+
+      const toggleBtn = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+
+      toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("show");
+      });
+
+      // Optional: Highlight active page
+      const links = document.querySelectorAll('.sidebar-menu a');
+      const currentPage = window.location.pathname.split("/").pop();
+      links.forEach(link => {
+        if (link.getAttribute("href") === currentPage) {
+          link.classList.add("active");
+        }
+      });
+    });
+</script>
+
+ <script src="setting.js"></script>
+
+</body>
+</html>
+

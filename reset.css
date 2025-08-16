@@ -1,0 +1,143 @@
+/* reset.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom right, #fac4cf, #adddeb);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 25px;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #222;
+  text-align: center;
+}
+
+/* === Input Fields === */
+input[type="text"],
+input[type="password"] {
+  width: 92%;
+  padding: 12px 14px;
+  margin-bottom: 15px;
+  margin-top: 20px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background: #f9f9f9;
+  transition: border-color 0.3s ease;
+  text-align: center;
+}
+
+input:focus {
+  border-color: #b0006d;
+  outline: none;
+}
+
+/* === Buttons === */
+.primary-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(to right, #4a024e, #c239a8);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.primary-btn:hover {
+  background: linear-gradient(to right, #650a67, #da61ba);
+}
+
+/* === reCAPTCHA container === */
+#recaptcha-container {
+  margin: 10px 0 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* === Status Message === */
+.status-message {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #b3003b;
+}
+
+.status-message.success {
+  color: #008f00;
+}
+
+/* === Utility Classes === */
+.hidden {
+  display: none;
+}
+
+/* === Mobile Responsive === */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 30px 20px;
+    border-radius: 20px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  input,
+  .primary-btn {
+    font-size: 0.95rem;
+  }
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #4a024e;
+  padding: 0;
+  margin: 0;
+}
+
+.back-btn:hover {
+  color: #c239a8;
+}
+
+.header-row h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #222;
+}
+

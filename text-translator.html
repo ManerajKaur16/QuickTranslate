@@ -1,0 +1,213 @@
+<script>
+  const savedSettings = JSON.parse(localStorage.getItem("settings")) || {};
+  const theme = savedSettings.theme || "light";
+  document.body.classList.add(`${theme}-theme`);
+</script>
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+  const firebaseConfig = {
+     apiKey: "AIzaSyB1bdyCh87pa1nQk_te72zrZLxrqlQvB-o",
+      authDomain: "smartlibrarymanagementsy-13082.firebaseapp.com",
+      databaseURL: "https://smartlibrarymanagementsy-13082-default-rtdb.firebaseio.com",
+      projectId: "smartlibrarymanagementsy-13082",
+      storageBucket: "smartlibrarymanagementsy-13082.appspot.com",
+      messagingSenderId: "128388067166",
+      appId: "1:128388067166:web:02bf2c483c53342912b96f",
+      measurementId: "G-37HLHXN253"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+  
+  window.database = database;
+  window.push = push;
+  window.ref = ref;
+  window.set = set;
+
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Text Translator</title>
+  
+
+   <script>
+  (function () {
+    const saved = JSON.parse(localStorage.getItem("settings")) || {};
+    const theme = saved.theme || "light";
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add(`${theme}-theme`);
+    });
+  })();
+</script>
+
+   <!-- External CSS -->
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+</head>
+<body class="main-home">
+
+   <!--  Sidebar Container -->
+  <div id="sidebar-container"></div>
+
+  <div class="home-container translator-card">
+    <h1>Text Translator</h1>
+    <p class="subtitle">Translate To Your Language, Your Way !</p>
+
+    <label for="inputText">Enter text</label>
+    <textarea id="inputText" placeholder="Enter text here..." rows="6" class="input-area"></textarea>
+
+    <div class="lang-select-group">
+      <div>
+        <label for="sourceLang">Entered Language</label>
+        <select id="sourceLang" class="lang-select">            
+            <option value="ar" data-flag="sa">Arabic</option>
+            <option value="bn" data-flag="bd">Bengali</option>
+            <option value="zh" data-flag="cn">Chinese (Mandarin)</option>
+            <option value="en" data-flag="us">English</option>
+            <option value="tl" data-flag="ph">Filipino</option> 
+            <option value="fr" data-flag="fr">French</option>
+            <option value="de" data-flag="de">German</option>
+            <option value="hi" data-flag="in">Hindi</option>
+            <option value="id" data-flag="id">Indonesian</option>
+            <option value="it" data-flag="it">Italian</option>
+            <option value="ja" data-flag="jp">Japanese</option>
+            <option value="ko" data-flag="kr">Korean</option>
+            <option value="ml" data-flag="in">Malayalam</option>
+            <option value="ms" data-flag="my">Malay</option>
+            <option value="nl" data-flag="nl">Dutch</option>
+            <option value="pa" data-flag="my">Punjabi</option>
+            <option value="pl" data-flag="pl">Polish</option>
+            <option value="pt" data-flag="pt">Portuguese</option>
+            <option value="ru" data-flag="ru">Russian</option>
+            <option value="ta" data-flag="in">Tamil</option>
+            <option value="te" data-flag="in">Telugu</option>
+            <option value="th" data-flag="th">Thai</option>
+            <option value="tr" data-flag="tr">Turkish</option>
+            <option value="ur" data-flag="pk">Urdu</option>
+            <option value="vi" data-flag="vn">Vietnamese</option>
+        </select>
+    </div>
+
+      <div>
+        <label for="targetLang">Translation language </label>
+        <select id="targetLang" class="lang-select">
+            <option value="ar" data-flag="sa">Arabic</option>
+            <option value="bn" data-flag="bd">Bengali</option>
+            <option value="zh" data-flag="cn">Chinese (Mandarin)</option>
+            <option value="en" data-flag="us">English</option>
+            <option value="tl" data-flag="ph">Filipino</option> 
+            <option value="fr" data-flag="fr">French</option>
+            <option value="de" data-flag="de">German</option>
+            <option value="hi" data-flag="in">Hindi</option>
+            <option value="id" data-flag="id">Indonesian</option>
+            <option value="it" data-flag="it">Italian</option>
+            <option value="ja" data-flag="jp">Japanese</option>
+            <option value="ko" data-flag="kr">Korean</option>
+            <option value="ml" data-flag="in">Malayalam</option>
+            <option value="ms" data-flag="my">Malay</option>
+            <option value="nl" data-flag="nl">Dutch</option>
+            <option value="pa" data-flag="my">Punjabi</option>
+            <option value="pl" data-flag="pl">Polish</option>
+            <option value="pt" data-flag="pt">Portuguese</option>
+            <option value="ru" data-flag="ru">Russian</option>
+            <option value="ta" data-flag="in">Tamil</option>
+            <option value="te" data-flag="in">Telugu</option>
+            <option value="th" data-flag="th">Thai</option>
+            <option value="tr" data-flag="tr">Turkish</option>
+            <option value="ur" data-flag="pk">Urdu</option>
+            <option value="vi" data-flag="vn">Vietnamese</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="action-btns">
+     <button onclick="translateText()" class="primary-btn translate-btn">Translate</button>
+     <button onclick="speakInput()" class="primary-btn listen-btn">🔊 Listen Entered Text</button>
+    </div>
+
+    <h3 class="translated-label">Translated Output:</h3>
+    <div id="translatedText" class="output-box translated-output"></div>
+    <button onclick="speakOutput()" class="primary-btn listen-btn">🔊 Listen Translated Text</button>
+    <button class=" copy-btn" onclick="copyTranslation()">📋 Copy Translation</button>
+    <p id="detectedLang" class="status-message"></p>
+  </div>
+
+  <!-- JS Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="translate.js"></script>
+
+  <!-- Select2 Flag Template -->
+<script>
+  function formatLang(lang) {
+    if (!lang.id) return lang.text;
+    const flag = $(lang.element).data('flag');
+     const img = flag ? `<img src="https://flagcdn.com/w40/${flag}.png" style="width:20px; vertical-align:middle; margin-right:8px;" />` : "";
+    return $(`<span>${img}${lang.text}</span>`);
+  }
+
+  $(document).ready(function () {
+    $('.lang-select').select2({
+      templateResult: formatLang,
+      templateSelection: formatLang,
+      minimumResultsForSearch: 1,
+      width: '100%'
+    });
+  });
+
+</script>
+
+<!--  Sidebar Loader, Toggle, and Active Page Highlight -->
+<script>
+  // Inject sidebar HTML
+  fetch("sidebar.html")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("sidebar-container").innerHTML = html;
+
+      const toggleBtn = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+
+      toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("show");
+      });
+
+      // Optional: Highlight active page
+      const links = document.querySelectorAll('.sidebar-menu a');
+      const currentPage = window.location.pathname.split("/").pop();
+      links.forEach(link => {
+        if (link.getAttribute("href") === currentPage) {
+          link.classList.add("active");
+        }
+      });
+    });
+</script>
+
+<!--  Disable 'Listen' buttons if speech synthesis is unsupported -->
+<script>
+  window.addEventListener('load', function () {
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+      document.querySelectorAll('.listen-btn').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = 0.5;
+        btn.title = " Speech synthesis is not supported in this browser.";
+        btn.innerText = " Not Supported";
+      });
+    }
+  });
+</script>
+
+<script src="translate.js"></script>
+
+
+</body>
+</html>

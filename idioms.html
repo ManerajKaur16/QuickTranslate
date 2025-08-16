@@ -1,0 +1,182 @@
+<script>
+  const savedSettings = JSON.parse(localStorage.getItem("settings")) || {};
+  const theme = savedSettings.theme || "light";
+  document.body.classList.add(`${theme}-theme`);
+</script>
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+     apiKey: "AIzaSyB1bdyCh87pa1nQk_te72zrZLxrqlQvB-o",
+      authDomain: "smartlibrarymanagementsy-13082.firebaseapp.com",
+      databaseURL: "https://smartlibrarymanagementsy-13082-default-rtdb.firebaseio.com",
+      projectId: "smartlibrarymanagementsy-13082",
+      storageBucket: "smartlibrarymanagementsy-13082.appspot.com",
+      messagingSenderId: "128388067166",
+      appId: "1:128388067166:web:02bf2c483c53342912b96f",
+      measurementId: "G-37HLHXN253"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.addDoc = addDoc;
+  window.collection = collection;
+</script>
+
+
+  <!-- Theme Loader -->
+  <script>
+    (function () {
+      const saved = JSON.parse(localStorage.getItem("settings")) || {};
+      const theme = saved.theme || "light";
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.classList.add(`${theme}-theme`);
+      });
+    })();
+  </script>
+
+  
+<!-- idioms.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Idioms Translator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/style.css">
+
+</head>
+<body class="main-home">
+
+  <!-- Sidebar -->
+  <div id="sidebar-container"></div>
+
+  <!-- Main Translator UI -->
+  <div class="home-container translator-card">
+    <h1>Idioms Translator</h1>
+    <p class="subtitle">Translate To Your Language, Your Way!</p>
+
+    <form method="POST">
+      <label for="language"><b>Choose Language:</b></label>
+      <select name="language" id="language" required>
+        {% for lang in languages %}
+          <option value="{{ lang }}">{{ lang }}</option>
+        {% endfor %}
+      </select>
+
+      <input type="text" name="idiom" class="input-area" placeholder="Enter idiom..." required>
+      <button type="submit" class="primary-btn">💡 Explain Idiom</button>
+    </form>
+
+    <div class="output-box">
+      {% if result %}
+        {{ result | safe }}
+      {% else %}
+        📖 Explanation will appear here.
+      {% endif %}
+    </div>
+
+    <div class="btn-group">
+      <button class="primary-btn" onclick="speakResult()">🔊 Listen to Explanation</button>
+      <button class="copy-btn" onclick="copyExplanation()">📋 Copy Explanation</button>
+    </div>
+  </div>
+
+  <!-- jQuery + Select2 -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <!-- Sidebar Loader Script -->
+  <script>
+    fetch("sidebar.html").then(res => res.text()).then(html => {
+      document.getElementById("sidebar-container").innerHTML = html;
+
+      const toggleBtn = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+
+      if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("show");
+        });
+      }
+
+      const links = document.querySelectorAll('.sidebar-menu a');
+      const currentPage = window.location.pathname.split("/").pop();
+
+      links.forEach(link => {
+        if (link.getAttribute("href") === currentPage) {
+          link.classList.add("active");
+        }
+      });
+    });
+  </script>
+
+  <!-- Language Functions -->
+  <script>
+    async function speakResult() {
+      const explanation = document.querySelector('.output-box').innerText;
+      const langCode = document.querySelector('#language').value;
+
+      if (explanation.trim() === "") {
+        alert("No explanation to speak.");
+        return;
+      }
+
+      const response = await fetch("/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: explanation, lang: getLangCode(langCode) })
+      });
+
+      const data = await response.json();
+      const audio = new Audio("data:audio/mp3;base64," + data.audio);
+      audio.play();
+    }
+
+    function copyExplanation() {
+      const explanation = document.querySelector('.output-box').innerText;
+      navigator.clipboard.writeText(explanation).then(() => {
+        alert('Explanation copied to clipboard!');
+      });
+    }
+
+    function getLangCode(languageName) {
+      const langMap = {
+      "English": "en-US",
+      "Bengali": "bn-IN",
+      "Chinese (Mandarin)": "zh-CN",
+      "Filipino": "fil-PH",
+      "French": "fr-FR",
+      "German": "de-DE",
+      "Hindi": "hi-IN",
+      "Indonesian": "id-ID",
+      "Italian": "it-IT",
+      "Japanese": "ja-JP",
+      "Korean": "ko-KR",
+      "Malayalam": "ml-IN",
+      "Malay": "ms-MY",
+      "Dutch": "nl-NL",
+      "Punjabi": "pa-IN",
+      "Polish": "pl-PL",
+      "Portuguese": "pt-PT",
+      "Russian": "ru-RU",
+      "Tamil": "ta-IN",
+      "Telugu": "te-IN",
+      "Thai": "th-TH",
+      "Turkish": "tr-TR",
+      "Vietnamese": "vi-VN",
+      "Urdu": "ur-PK",
+      "Arabic": "ar-SA"
+      };
+      return langMap[languageName] || "en-US";
+    }
+  </script>
+
+</body>
+</html>
